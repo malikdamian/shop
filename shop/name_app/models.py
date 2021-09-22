@@ -6,7 +6,11 @@ class Product(models.Model):
     producer = models.CharField(max_length=128)
     description = models.TextField()
     price = models.FloatField()
-    photo = models.ImageField(null=True)
+    image = models.ImageField(null=True, blank=True)
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
