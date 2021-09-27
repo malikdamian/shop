@@ -6,7 +6,7 @@ class Product(models.Model):
     producer = models.CharField(max_length=128)
     description = models.TextField()
     price = models.FloatField()
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to='images/')
     objects = models.Manager()
 
     def __str__(self):
