@@ -41,11 +41,31 @@ class AddProductView(View):
 
     def get(self, request):
         form = ProductForm()
-        return render(request, 'base_form.html', {'form': form})
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Dodaj'})
 
     def post(self, request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('/products/')
-        return render(request, 'base_form.html', {'form': form})
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Dodaj'})
+
+
+class EditProductView(View):
+
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductForm(instance=product)
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Edytuj'})
+
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/product/{product.id}/')
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Edytuj'})
