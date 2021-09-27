@@ -69,3 +69,15 @@ class EditProductView(View):
             return redirect(f'/product/{product.id}/')
         return render(request, 'base_form.html', {'form': form,
                                                   'button': 'Edytuj'})
+
+
+class DeleteProductView(View):
+
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        return render(request, 'del_confirm.html', {'product': product})
+
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        product.delete()
+        return redirect('/')
