@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-{% block title %} Konto założone{% endblock %}
+{% block title %} Konto utworzone{% endblock %}
 {% block content %}
 <div class="container px-5 my-5">
-
+    <div class="text-center"><p class="display-6 fw-bolder">Witaj {{ new_user }}</p></div>
+    <p class="text-center" > Twoje konto zostało utworzone. Możesz się juz <a href="{% url 'accounts:login' %}">zalogować</a> </p>
 
 </div>
 {% endblock %}
