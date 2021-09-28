@@ -1,9 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .forms import LoginForm
+from .forms import LoginForm, UserRegistrationForm
 
 
 class LoginView(View):
@@ -35,3 +34,20 @@ class LogoutView(View):
         return redirect('/')
 
 
+class UserRegistrationView(View):
+
+    def get(self, request):
+        form = UserRegistrationForm()
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Zarejestuj'})
+
+    def post(self, request):
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            return render(request, 'register_done.html', {'new_user': user})
+
+        return render(request, 'base_form.html', {'form': form,
+                                                  'button': 'Zarejestuj'})
