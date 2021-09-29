@@ -1,4 +1,14 @@
+from django.contrib.auth.models import User
 from django.db import models
+
+
+class Customer(models.Model):
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128, null=True)
+    email = models.CharField(max_length=128, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model):
@@ -14,23 +24,32 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    client = models.CharField(max_length=128)
-    products = models.ManyToManyField(Product)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True)
+    date_ordered = models.DateTimeField(auto_now_add=True)
+    complete = models.BooleanField(default=False, null=True, blank=True)
+    transaction_id = models.CharField(max_length=128, null=True)
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
     date_added = models.DateTimeField(auto_now_add=True)
-    date_payment = models.DateField()
-    total_price = models.FloatField()
+
+    def __str__(self):
+        return str(self.pk)
 
 
-class Address(models.Model):
-    username = models.CharField(max_length=128)
+class ShippingAddress(models.Model):
+    customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE)
     company = models.CharField(max_length=128, null=True)
-    first_name = models.CharField(max_length=128)
-    last_name = models.CharField(max_length=128)
     street = models.CharField(max_length=128)
     house_number = models.IntegerField()
     premises_number = models.IntegerField(null=True)
     postcode = models.CharField(max_length=128)
-    location = models.CharField(max_length=128)
-
-
-
+    city = models.CharField(max_length=128)
+    date_added = models.DateTimeField(auto_now_add=True)
