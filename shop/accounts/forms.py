@@ -14,23 +14,26 @@ class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='', widget=forms.PasswordInput(attrs={'class': 'form-control',
                                                                            'placeholder': 'Hasło'}))
     password_2 = forms.CharField(label='', widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                            'placeholder': 'Powtórz hasło'}))
+                                                                             'placeholder': 'Powtórz hasło'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control',
                                                'placeholder': 'Nazwa użytkownika',
                                                'help_text': ''}),
             'first_name': forms.TextInput(attrs={'class': 'form-control',
                                                  'placeholder': 'Imię'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control',
+                                                'placeholder': 'Nazwisko'}),
             'email': forms.EmailInput(attrs={'class': 'form-control',
                                              'placeholder': 'Email'})
         }
         labels = {
             'username': '',
             'first_name': '',
+            'last_name': '',
             'email': '',
         }
         help_texts = {
