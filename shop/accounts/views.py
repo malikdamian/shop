@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from .forms import LoginForm, UserRegistrationForm
@@ -51,3 +52,10 @@ class UserRegistrationView(View):
 
         return render(request, 'base_form.html', {'form': form,
                                                   'button': 'Zarejestuj'})
+
+
+class UserInfoView(View):
+
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        return render(request, 'user_info.html', {'user': user})
