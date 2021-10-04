@@ -1,9 +1,11 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .forms import ProductForm
-from .models import Product
+from .models import Product, Order, OrderItem
 
 
 class IndexView(View):
@@ -21,7 +23,7 @@ class ProductsView(View):
                                               Q(producer__icontains=search))
         else:
             products = Product.objects.all().order_by('-id')
-        paginator = Paginator(products, 3)
+        paginator = Paginator(products, 8)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return render(request, 'products.html', {'page_obj': page_obj,
@@ -48,7 +50,7 @@ class AddProductView(View):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('/products/')
+            return redirect('name_app:products')
         return render(request, 'base_form.html', {'form': form,
                                                   'button': 'Dodaj'})
 
@@ -66,7 +68,7 @@ class EditProductView(View):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            return redirect(f'/product/{product.id}/')
+            return redirect('name_app:product', product_id=product.id)
         return render(request, 'base_form.html', {'form': form,
                                                   'button': 'Edytuj'})
 
@@ -80,4 +82,21 @@ class DeleteProductView(View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         product.delete()
-        return redirect('/')
+        return redirect('name_app:index')
+
+
+class CartView(View):
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+        else:
+            items = []
+            order = {'get_cart_items': 0,
+                     'get_cart_total': 0}
+        return render(request, 'cart.html', {'items': items,
+                                             'order': order})
+
+

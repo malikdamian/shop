@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Koszyk {% endblock %}
+
+{% block content %}
+ <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<p></p>
+<div class="container">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5 class="pull-right"><strong>{{ order.get_cart_items }}</strong></h5>
+                    <h5>Artykuły w twoim koszyku</h5>
+                </div>
+                {% for item in items %}
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table shoping-cart-table">
+                            <tbody>
+                            <tr>
+                                <td width="90">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" width="120" height="100">
+                                    {% else %}
+                                    <div class="cart-product-imitation">
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="desc">
+                                    <h3>
+                                    <a href="{% url 'name_app:product' item.product.id %}" class="text-navy">
+                                        {{ item.product.name }}
+                                    </a>
+                                    </h3>
+                                    <p class="small">
+                                        {{ item.product.description }}
+                                    </p>
+
+                                    <div class="m-t-sm">
+                                        <a href="#" class="text-muted"><i class="fa fa-trash"></i> Usuń</a>
+<!--                                        |-->
+<!--                                        <a href="#" class="text-muted"><i class="fa fa-star"></i> Dodaj do listy ulubionych</a>-->
+                                    </div>
+                                </td>
+                                {% if item.product.discount_price %}
+                                <td width="100">
+                                    <s class="small text-muted">{{ item.product.price|floatformat:2 }} zł</s>
+                                    {{ item.product.discount_price|floatformat:2 }} zł
+                                </td>
+                                {% else %}
+                                <td width="100">
+                                    {{ item.product.price|floatformat:2 }} zł
+                                {% endif %}
+
+                                </td>
+                                <td width="30">
+                                    <button type="button" class="btn btn-default btn-lg">
+                                        <i data-product="{{ item.product.id }}" data-action="add" class="bi bi-caret-up-fill update-cart"></i>
+                                        <i data-product="{{ item.product.id }}" data-action="remove" class="bi bi-caret-down-fill update-cart"></i>
+                                    </button>
+                                </td>
+                                <td width="50">
+                                    <div class="alert alert-secondary" >{{ item.quantity }}</div>
+                                </td>
+                                <td>
+                                    <h4>
+                                        {{ item.get_total|floatformat:2  }}zł
+                                    </h4>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                {% endfor %}
+                <div class="ibox-content" >
+                    <div class="container">
+                        <a href="{% url 'name_app:checkout' %}" ><button class="btn btn-success pull-right"><i class="fa fa fa-shopping-cart"></i> Przejdź do kasa</button></a>
+                    </div>
+                        <div class="container">
+                            <a href="{% url 'name_app:products' %}" ><button class="btn btn-white"><i class="fa fa-arrow-left"></i> Kontynuuj zakupy</button></a>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Do zapłaty</h5>
+                </div>
+                <div class="ibox-content">
+                    <span>
+                        Suma
+                    </span>
+                    <h2 class="font-bold">
+                        {{ order.get_cart_total|floatformat:2 }} zł
+                    </h2>
+
+                    <hr>
+                    <span class="text-muted small">
+                        *Wysyłka na teran polski oraz europy
+                    </span>
+                    <div class="m-t-sm">
+                        <div class="btn-group">
+                        <a href="{% url 'name_app:checkout' %}" class="btn btn-success btn-sm"><i class="fa fa-shopping-cart"></i> Przejdź do kasa</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

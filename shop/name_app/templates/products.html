@@ -5,43 +5,47 @@
 {% block content %}
 
 
-<!-- Search form -->
+<!-- Section-->
+<section class="py-5">
+    {% include 'search.html' with search=search %}
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for product in page_obj %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    {% if product.image %}
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="..."  height="190" width="250"/>
+                    {% else %}
+                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." height="190" width="250"/>
+                    {% endif %}
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder"> <a href="{% url 'name_app:product' product.id %}" style="color:black">{{ product }}</a> </h5>
+                            <h6 class="fw-bolder">{{ product.producer }}</h6>
+                            <!-- Product price-->
 
-
-    <!-- Section-->
-    <section class="py-5">
-        {% include 'search.html' %}
-        <div class="container px-4 px-lg-5 mt-5">
-            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                {% for product in page_obj %}
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        {% if product.image %}
-                        <img class="card-img-top" src="{{ product.image.url }}" alt="..."  height="190" width="250"/>
+                        {% if product.discount_price %}
+                            {{ product.discount_price }} zł
                         {% else %}
-                        <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." height="190" width="250"/>
+                            {{ product.price }} zł
                         {% endif %}
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder"> <a href="{% url 'name_app:product' product.id %}" style="color:black">{{ product }}</a> </h5>
-                                <h6 class="fw-bolder">{{ product.producer }}</h6>
-                                <!-- Product price-->
-<!--                                    <span class="text-muted text-decoration-line-through">$20.00</span>-->
-                                {{ product.price }} zł
-                            </div>
                         </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Dodaj do koszyka</a></div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+<!--                            <div class="text-center"><a data-product="{{ product.id }}" data-action="add" class="btn btn-outline-dark mt-auto update-cart" href="#">Dodaj do koszyka</a></div>-->
+                        <div class="text-center">
+                            <button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-dark mt-auto update-cart">Dodaj do koszyka </button>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
-    </section>
+    </div>
+</section>
 
 {% include "pagination.html" with page_obj=page_obj %}
 
