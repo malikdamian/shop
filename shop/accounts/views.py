@@ -21,7 +21,7 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/')
+                return redirect('name_app:index')
             else:
                 form = LoginForm()
         return render(request, 'login.html', {'form': form,
@@ -32,7 +32,7 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        return redirect('/')
+        return redirect('name_app:index')
 
 
 class UserRegistrationView(View):
