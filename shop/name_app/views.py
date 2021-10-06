@@ -118,3 +118,28 @@ class CheckoutView(View):
                                                  'shipping': False})
 
 
+def update_item(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+
+    print('action:', action)
+    print('produtId:', productId)
+
+    customer = request.user.customer
+    product = get_object_or_404(Product, id=productId)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+    orderitem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        orderitem.quantity = (orderitem.quantity + 1)
+    elif action == 'remove':
+        orderitem.quantity = (orderitem.quantity - 1)
+
+    orderitem.save()
+
+    if orderitem.quantity <= 0:
+        orderitem.delete()
+
+    return JsonResponse('Item was added', safe=False)

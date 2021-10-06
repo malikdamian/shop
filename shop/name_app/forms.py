@@ -1,10 +1,8 @@
 from django import forms
-
-from .models import Product
+from .models import Product, ShippingAddress
 
 
 class ProductForm(forms.ModelForm):
-
     class Meta:
         model = Product
         fields = '__all__'
@@ -21,6 +19,9 @@ class ProductForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control',
                                               'placeholder': 'Cena',
                                               }),
+            'discount_price': forms.NumberInput(attrs={'class': 'form-control',
+                                                'placeholder': 'Promocyjna cena',
+                                              }),
             'image': forms.FileInput(attrs={'class': 'form-control',
                                             }),
         }
@@ -29,5 +30,7 @@ class ProductForm(forms.ModelForm):
             'producer': '',
             'description': '',
             'price': '',
+            'discount_price': '',
             'image': '',
         }
+
