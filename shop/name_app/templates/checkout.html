@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Podsumowanie zamówienia {% endblock %}
+
+{% block content %}
+<style>
+  .hidden {
+    display: none;
+}
+</style>
+<p></p>
+<div class="container">
+  <main>
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-success">Twój koszyk</span>
+          <span class="badge bg-success rounded-pill">{{ order.get_cart_items }}</span>
+        </h4>
+        <ul class="list-group mb-3">
+          {% for item in items %}
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+              {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" width="120" height="100">
+              {% else %}
+                <div class="cart-product-imitation"></div>
+              {% endif %}
+            <div>
+              <h6 class="my-0">{{ item.product.name }}</h6>
+              <small class="text-muted">{{ item.product.description }}</small>
+            </div>
+            {% if item.product.discount_price %}
+              <span class="text-muted">{{ item.product.discount_price|floatformat:2 }} zł</span>
+            {% else %}
+              <span class="text-muted">{{ item.product.price|floatformat:2 }} zł</span>
+            {% endif %}
+
+          </li>
+          {% endfor %}
+
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Suma (PLN)</span>
+            <strong>{{ order.get_cart_total|floatformat:2 }}</strong>
+          </li>
+        </ul>
+
+        <div class="ibox-content">
+            <a href="{% url 'name_app:cart' %}" ><button class="btn btn-white"><i class="fa fa-arrow-left"></i> Wróć do koszyka</button></a>
+        </div>
+
+      </div>
+      <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Dane płatności</h4>
+  <div id="form-wrapper">
+        <form class="needs-validation" id="form">
+          <div class="row g-3">
+
+          <div id="user-info" class="row g-3">
+
+            <div class="col-md-6">
+              <label for="username" class="form-label">Username</label>
+              <div class="input-group has-validation">
+                <input type="text" class="form-control" id="username" placeholder="Username" required>
+              <div class="invalid-feedback">
+                  Your username is required.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+              <input type="email" class="form-control" id="email" placeholder="you@example.com">
+              <div class="invalid-feedback">
+                Please enter a valid email address for shipping updates.
+              </div>
+            </div>
+
+        </div>
+
+            <div id="shipping-info" class="row g-3">
+            <div class="col-sm-4" >
+              <label for="first_name" class="form-label">First name</label>
+              <input type="text" class="form-control" id="first_name" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                Valid first name is required.
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <label for="last_name" class="form-label">Nazwisko</label>
+              <input type="text" class="form-control" id="last_name" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                Valid last name is required.
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <label for="company" class="form-label">Firma</label>
+              <input type="text" class="form-control" id="company" placeholder="" value="">
+            </div>
+
+            <div class="col-md-5">
+              <label for="address" class="form-label">Adres</label>
+              <input type="text" class="form-control" id="address" placeholder="" required>
+              <div class="invalid-feedback">
+                Please enter your shipping address.
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <label for="postcode" class="form-label">Kod</label>
+              <input type="text" class="form-control" id="postcode" placeholder="xx-xxx" required>
+              <div class="invalid-feedback">
+                Zip code required.
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="city" class="form-label">Miasto</label>
+              <input type="text" class="form-control" id="city" placeholder="" required>
+              <div class="invalid-feedback">
+                Please enter your city.
+              </div>
+            </div>
+          </div>
+             </div>
+
+          <hr class="my-4">
+          <button id="form-button" class="w-100 btn btn-success btn-lg" type="submit">Continue</button>
+
+        </form>
+      </div>
+        <div class="hidden" id="payment-info">
+<!--                  <hr class="my-4">-->
+          <h4 class="mb-3" >Płatność</h4>
+            <div class="form-check">
+              <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+              <label class="form-check-label" for="paypal">PayPal</label>
+            </div>
+
+          </div>
+
+      </div>
+      </div>
+  </main>
+</div>
+<p></p>
+
+<!--<script src="{% static 'js/checkout.js' %}"></script>-->
+<script type="text/javascript">
+    var shipping = '{{ order.shipping }}'
+
+
+if (shipping == ''){
+    document.getElementById('shipping-info').innerHTML = ''
+}
+
+if (user != 'AnonymousUser'){
+    document.getElementById('user-info').innerHTML = ''
+}
+
+if (shipping == 'False' && user != 'AnonymousUser'){
+    document.getElementById('form-wrapper').classList.add('hidden')
+    document.getElementById('payment-info').classList.remove('hidden')
+
+}
+
+var form = document.getElementById('form')
+
+form.addEventListener('submit', function(e){
+    e.preventDefault()
+    console.log('Form Submitted...')
+    document.getElementById('form-button').classList.add('hidden');
+    document.getElementById('payment-info').classList.remove('hidden');
+})
+
+document.getElementById('paypal').addEventListener('click', function(e){
+    submitFormData()
+})
+
+function submitFormData(){
+    console.log('Payment button clicked')
+
+
+
+}
+</script>
+
+{% endblock %}
+
+
+
