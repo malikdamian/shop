@@ -55,3 +55,4 @@ class UserRegistrationForm(forms.ModelForm):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
             raise ValidationError('Użytkownik o tej nazwie już istnieje.')
+        return username
