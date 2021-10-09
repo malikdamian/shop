@@ -1,3 +1,4 @@
+import datetime
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
@@ -5,7 +6,7 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .forms import ProductForm
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, ShippingAddress
 
 
 class IndexView(View):
@@ -143,3 +144,38 @@ def update_item(request):
         orderitem.delete()
 
     return JsonResponse('Item was added', safe=False)
+
+
+def process_order(request):
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+        total = float(data['form']['total'])
+        order.transaction_id = transaction_id
+
+        if total == order.get_cart_total:
+            order.complete = True
+        order.save()
+
+        if order.shipping:
+            ShippingAddress.objects.create(
+                customer=customer,
+                order=order,
+                first_name=data['shipping']['first_name'],
+                last_name=data['shipping']['last_name'],
+                company=data['shipping']['company'],
+                address=data['shipping']['address'],
+                postcode=data['shipping']['postcode'],
+                city=data['shipping']['city'],
+
+            )
+    else:
+        print('User is not logged in..')
+
+
+
+    return JsonResponse('Payment submitted..', safe=False)
