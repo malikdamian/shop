@@ -19,8 +19,12 @@
                 <div class="small mb-1">{{ product.producer }}</div>
                 <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
                 <div class="fs-5 mb-5">
-                    <span class="text-decoration-line-through">12000 zł</span>
-                    <span>{{ product.price }} zł</span>
+                    {% if product.discount_price %}
+                    <span class="text-decoration-line-through">{{ product.price }} zł</span>
+                    <span>{{ product.discount_price }} zł</span>
+                    {% else %}
+                    <span>{{ product.price  }} zł</span>
+                    {% endif %}
                 </div>
                 <p class="lead">{{ product.description }}</p>
                 <div class="d-flex">
@@ -31,8 +35,13 @@
                     </button>
                 </div>
             </div>
+            <div class="d-flex">
+            <div class="text-center"><a class="btn btn-outline-danger mt-auto" href="{% url 'name_app:delete-product' product.id %}">Usuń</a></div>
+            <div class="text-center"><a class="btn btn-outline-warning mt-auto" href="{% url 'name_app:edit-product' product.id %}">Edytuj</a></div>
+            </div>
+            </div>
         </div>
-    </div>
+
 </section>
 <!-- Related items section-->
 <section class="py-5 bg-light">
@@ -54,7 +63,11 @@
                             <!-- Product name-->
                             <h5 class="fw-bolder">{{ producer.name }}</h5>
                             <!-- Product price-->
-                            {{ producer.price }} zł
+                            {% if producer.discount_price %}
+                                {{ producer.discount_price }} zł
+                            {% else %}
+                                {{ producer.price }} zł
+                            {% endif %}
                         </div>
                     </div>
                     <!-- Product actions-->
