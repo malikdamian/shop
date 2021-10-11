@@ -22,7 +22,7 @@
           {% for item in items %}
           <li class="list-group-item d-flex justify-content-between lh-sm">
               {% if item.product.image %}
-                <img src="{{ item.product.image.url }}" width="120" height="100">
+                <img src="{{ item.product.image.url }}" width="120" height="100" alt="">
               {% else %}
                 <div class="cart-product-imitation"></div>
               {% endif %}
@@ -61,7 +61,7 @@
 
             <div class="col-md-6">
               <div class="input-group has-validation">
-                <input type="text" class="form-control" id="username" placeholder="Username" required>
+                <input type="text" class="form-control" id="name" placeholder="Username" required>
               </div>
             </div>
 

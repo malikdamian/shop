@@ -2,118 +2,139 @@
 {% load static %}
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>{% block title %} Sklep {% endblock %}</title>
-        <!-- Favicon-->
-<!--        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />-->
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<!--        <script src="{% static 'js/csrf_token.js' %}"></script>-->
-        <script type="text/javascript">
-            var user = '{{ request.user }}'
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>{% block title %} Sklep {% endblock %}</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+{#       <script src="{% static 'js/csrf_token.js' %}"></script>#}
+    <script type="text/javascript">
+        const user = '{{ request.user }}';
 
-            function getToken(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            const csrftoken = getToken('csrftoken');
+   		function getToken(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = cookies[i].trim();
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getToken('csrftoken')
 
-        </script>
-    </head>
-        <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="{% url 'name_app:index' %}"><img src="{% static 'favicon.ico' %}" height="50" width="50"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'name_app:index' %}">Głowna</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">O nas</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sklep</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'name_app:products' %}">Wszystkie produkty</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'name_app:add-product' %}">Dodaj produkt</a></li>
+		function getCookie(name) {
+
+		    var cookieArr = document.cookie.split(";");
+
+		    for(var i = 0; i < cookieArr.length; i++) {
+		        var cookiePair = cookieArr[i].split("=");
+
+		        if(name == cookiePair[0].trim()) {
+		            return decodeURIComponent(cookiePair[1]);
+		        }
+		    }
+
+		    return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+
+		if (cart == undefined){
+			cart = {}
+			console.log('Cart Created!', cart)
+			document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+		}
+		console.log('Cart:', cart)
+
+    </script>
+</head>
+<body>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="{% url 'name_app:index' %}"><img src="{% static 'favicon.ico' %}" height="50" width="50" alt=""></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'name_app:index' %}">Głowna</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">O nas</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sklep</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'name_app:products' %}">Wszystkie produkty</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#">Popular Items</a></li>
+                        <li><a class="dropdown-item" href="#">New Arrivals</a></li>
                     </ul>
-                    </div>
-                {% if user.is_superuser %}
-                <ul class="nav nav-pills">
-                  <li class="nav-item">
-                        <a href="/admin/" style="color:black" class="nav-link">Administrator</a>
-                  </li>
-              </ul>
-                {% endif %}
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'name_app:add-product' %}">Dodaj produkt</a></li>
+            </ul>
+            </div>
+        {% if user.is_superuser %}
+        <ul class="nav nav-pills">
+          <li class="nav-item">
+                <a href="{% url 'admin:index' %}" style="color:black" class="nav-link">Administrator</a>
+          </li>
+      </ul>
+        {% endif %}
 
-                {% if user.is_authenticated %}
-              <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'accounts:logout' %}">Wyloguj</a></div>
-              <ul class="nav nav-pills">
+        {% if user.is_authenticated %}
+      <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'accounts:logout' %}">Wyloguj</a></div>
+      <ul class="nav nav-pills">
+          <li class="nav-item">
+                <a href="{% url 'accounts:user-info' user.id %}" style="color:black" class="nav-link">Witaj {{ user.username }}</a>
+          </li>
+      </ul>
+        {% else %}
+         <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'accounts:register' %}">Rejestracja</a></div>
+            <ul class="nav nav-pills">
                   <li class="nav-item">
-                        <a href="{% url 'accounts:user-info' user.id %}" style="color:black" class="nav-link">Witaj {{ user.username }}</a>
+                    <a href="{% url 'accounts:login' %}" style="color:black" class="nav-link">Zaloguj</a>
                   </li>
-              </ul>
-                {% else %}
-                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'accounts:register' %}">Rejestracja</a></div>
-                    <ul class="nav nav-pills">
-                          <li class="nav-item">
-                            <a href="{% url 'accounts:login' %}" style="color:black" class="nav-link">Zaloguj</a>
-                          </li>
-                    </ul>
-                {% endif %}
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'name_app:cart' %}">
-                            <i class="bi-cart-fill me-1"></i>
-                            Koszyk
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{ cart_item }} </span>
-                        </a></div>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Chińska elektronika</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
-                </div>
-            </div>
-        </header>
+            </ul>
+        {% endif %}
+                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'name_app:cart' %}">
+                    <i class="bi-cart-fill me-1"></i>
+                    Koszyk
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">{{ cart_item }} </span>
+                </a></div>
+        </div>
+</nav>
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Chińska elektronika</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+        </div>
+    </div>
+</header>
 
 {% block content %}
 
 {% endblock %}
 
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="{% static 'js/form-validation.js' %}"></script>
-        <script src="{% static 'js/cart.js' %}"></script>
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{% static 'js/form-validation.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}"></script>
 
 </body>
 </html>

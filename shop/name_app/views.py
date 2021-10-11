@@ -6,7 +6,8 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .forms import ProductForm
-from .models import Product, Order, OrderItem, ShippingAddress
+from .models import Product, Order, OrderItem, ShippingAddress, Customer
+from .utils import cookie_cart, cart_data, guest_order
 
 
 class IndexView(View):
@@ -89,15 +90,10 @@ class DeleteProductView(View):
 class CartView(View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-        else:
-            items = []
-            order = {'get_cart_items': 0,
-                     'get_cart_total': 0}
 
+        data = cart_data(request)
+        order = data['order']
+        items = data['items']
         return render(request, 'cart.html', {'items': items,
                                              'order': order,
                                              'shipping': False})
@@ -106,20 +102,16 @@ class CartView(View):
 class CheckoutView(View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            customer = request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-        else:
-            items = []
-            order = {'get_cart_items': 0,
-                     'get_cart_total': 0}
+
+        data = cart_data(request)
+        order = data['order']
+        items = data['items']
         return render(request, 'checkout.html', {'items': items,
-                                                 'order': order,
-                                                 'shipping': False})
+                                                 'order': order})
 
 
 def update_item(request):
+
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
@@ -129,9 +121,11 @@ def update_item(request):
 
     customer = request.user.customer
     product = get_object_or_404(Product, id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order, created = Order.objects.get_or_create(customer=customer,
+                                                 complete=False)
 
-    orderitem, created = OrderItem.objects.get_or_create(order=order, product=product)
+    orderitem, created = OrderItem.objects.get_or_create(order=order,
+                                                         product=product)
 
     if action == 'add':
         orderitem.quantity = (orderitem.quantity + 1)
@@ -152,30 +146,16 @@ def process_order(request):
 
     if request.user.is_authenticated:
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-
-        total = float(data['form']['total'])
-        order.transaction_id = transaction_id
-
-        if total == order.get_cart_total:
-            order.complete = True
-        order.save()
-
-        if order.shipping:
-            ShippingAddress.objects.create(
-                customer=customer,
-                order=order,
-                first_name=data['shipping']['first_name'],
-                last_name=data['shipping']['last_name'],
-                company=data['shipping']['company'],
-                address=data['shipping']['address'],
-                postcode=data['shipping']['postcode'],
-                city=data['shipping']['city'],
-
-            )
+        order, created = Order.objects.get_or_create(customer=customer,
+                                                     complete=False)
     else:
-        print('User is not logged in..')
+        customer, order = guest_order(request, data)
 
+    total = float(data['form']['total'])
+    order.transaction_id = transaction_id
 
+    if total == order.get_cart_total:
+        order.complete = True
+    order.save()
 
     return JsonResponse('Payment submitted..', safe=False)
