@@ -15,11 +15,10 @@ class Product(models.Model):
     name = models.CharField(max_length=128)
     producer = models.CharField(max_length=128)
     description = models.TextField()
-    price = models.FloatField()
-    discount_price = models.FloatField(null=True, blank=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    discount_price = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     digital = models.BooleanField(default=False, null=True, blank=True)
     image = models.ImageField(null=True, blank=True, upload_to='images/')
-    objects = models.Manager()
 
     def __str__(self):
         return self.name
@@ -30,10 +29,9 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=True)
     transaction_id = models.CharField(max_length=128, null=True)
-    objects = models.Manager()
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.id)
 
     @property
     def get_cart_total(self):
@@ -62,10 +60,9 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.id)
 
     @property
     def get_total(self):
@@ -86,3 +83,6 @@ class ShippingAddress(models.Model):
     postcode = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
     date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.address}'
