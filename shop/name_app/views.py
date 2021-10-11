@@ -158,4 +158,15 @@ def process_order(request):
         order.complete = True
     order.save()
 
+    if order.shipping:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            first_name=data['shipping']['first_name'],
+            last_name=data['shipping']['last_name'],
+            company=data['shipping']['company'],
+            address=data['shipping']['address'],
+            postcode=data['shipping']['postcode'],
+            city=data['shipping']['city'],
+        )
     return JsonResponse('Payment submitted..', safe=False)
