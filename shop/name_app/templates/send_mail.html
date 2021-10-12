@@ -1,0 +1,10 @@
+Cześć {{ customer.name }}!
+
+Lista Twoich zakupów:
+{% for item in order.orderitem_set.all %}
+    {{ item.product }} {{ item.product.producer }} x{{ item.quantity }}
+
+{% endfor %}
+Suma: {{ order.get_cart_total }}zł
+
+Dziękujemy za zakupy w naszym sklepie :)

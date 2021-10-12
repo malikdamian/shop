@@ -4,10 +4,14 @@ from django.db.models import Q
 from django.http import JsonResponse
 import json
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.views import View
+
+from shop import settings
 from .forms import ProductForm
-from .models import Product, Order, OrderItem, ShippingAddress, Customer
-from .utils import cookie_cart, cart_data, guest_order
+from .models import Product, Order, OrderItem, ShippingAddress
+from .utils import cart_data, guest_order
+from django.core.mail import send_mail
 
 
 class IndexView(View):
@@ -90,7 +94,6 @@ class DeleteProductView(View):
 class CartView(View):
 
     def get(self, request):
-
         data = cart_data(request)
         order = data['order']
         items = data['items']
@@ -102,7 +105,6 @@ class CartView(View):
 class CheckoutView(View):
 
     def get(self, request):
-
         data = cart_data(request)
         order = data['order']
         items = data['items']
@@ -111,7 +113,6 @@ class CheckoutView(View):
 
 
 def update_item(request):
-
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
@@ -169,4 +170,18 @@ def process_order(request):
             postcode=data['shipping']['postcode'],
             city=data['shipping']['city'],
         )
+
+    order_confirmation(request, order, customer)
     return JsonResponse('Payment submitted..', safe=False)
+
+
+def order_confirmation(request, order, customer):
+    template = render_to_string('send_mail.html', {'customer': customer,
+                                                   'order': order})
+    send_mail(
+        f'Potwierdzenie zamowienia nr.{order.transaction_id}',
+        template,
+        settings.DEFAULT_FROM_EMAIL,
+        [customer.email],
+        fail_silently=False,
+    )
