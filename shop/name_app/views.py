@@ -1,12 +1,12 @@
 import datetime
+import weasyprint
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views import View
-
 from shop import settings
 from .forms import ProductForm
 from .models import Product, Order, OrderItem, ShippingAddress
@@ -178,10 +178,23 @@ def process_order(request):
 def order_confirmation(request, order, customer):
     template = render_to_string('send_mail.html', {'customer': customer,
                                                    'order': order})
-    send_mail(
+    mail_sent = send_mail(
         f'Potwierdzenie zamowienia nr.{order.transaction_id}',
         template,
         settings.DEFAULT_FROM_EMAIL,
         [customer.email],
         fail_silently=False,
     )
+    return mail_sent
+
+
+def invoice_pdf(request, shipping_address_id):
+    shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id)
+    html = render_to_string('invoice.html',
+                            {'shipping_address': shipping_address})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename=zamowienie_{shipping_address.order.transaction_id}.pdf'
+    weasyprint.HTML(string=html).write_pdf(response,
+                                           stylesheets=[weasyprint.CSS(
+                                               settings.STATIC_ROOT + 'css/invoice.css')])
+    return response

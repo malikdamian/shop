@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import IndexView, ProductsView, ProductView, AddProductView, EditProductView, DeleteProductView, \
-    CheckoutView, CartView, update_item, process_order
+    CheckoutView, CartView, update_item, process_order, invoice_pdf
 
 app_name = 'name_app'
 
@@ -15,4 +15,5 @@ urlpatterns = [
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('update-item/', update_item, name='update-item'),
     path('process-order/', process_order, name='process_order'),
+    path('invoice/<int:shipping_address_id>/pdf/', invoice_pdf, name='invoice_pdf'),
 ]

@@ -24,4 +24,4 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(ShippingAddress)
 class ShippingAddressAdmin(admin.ModelAdmin):
-    list_display = ('address', 'postcode', 'date_added')
+    list_display = ('address', 'postcode', 'date_added', 'id')
