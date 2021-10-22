@@ -1,0 +1,59 @@
+<html>
+<body>
+  <h1>Chińska elektornika</h1>
+  <p>
+    Faktura nr: {{ order.transaction_id }} <br>
+    <span class="secondary">
+      {{ shipping_address.date_added|date:"M d, Y" }}
+    </span>
+  </p>
+
+  <h3>Dane:</h3>
+  <p>
+  {% with  customer=shipping_address.customer %}
+    {{ customer.name }}<br>
+    {{ shipping_address.first_name }} {{ shipping_address.last_name }}<br>
+    {{ customer.email }}<br>
+    {% if shipping_address.company %}
+        {{ shipping_address.company }}<br>
+    {% endif %}
+    {{ shipping_address.address }}<br>
+    {{ shipping_address.postcode }}, {{ shipping_address.city }}<br>
+  {% endwith %}
+  </p>
+
+  <h3>Zakupione przedmioty:</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Producent</th>
+        <th>Cena</th>
+        <th>Ilość</th>
+        <th>Koszt</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.orderitem_set.all %}
+        <tr class="row{% cycle "1" "2" %}">
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.product.producer }}</td>
+        {% if item.product.discount_price  %}
+            <td class="num">{{ item.product.discount_price }} zł</td>
+        {% else %}
+            <td class="num">{{ item.product.price }} zł</td>
+        {% endif %}
+          <td class="num">{{ item.quantity }}</td>
+          <td class="num">${{ item.get_total }} zł</td>
+        </tr>
+      {% endfor %}
+      <tr class="total">
+        <td colspan="3">Suma</td>
+        <td class="num">{{ order.get_cart_total }} zł</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="pending">Oczekiwanie na płatność
+  </span>
+</body>
+</html>

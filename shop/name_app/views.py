@@ -1,4 +1,5 @@
 import datetime
+from io import BytesIO
 import weasyprint
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -11,7 +12,7 @@ from shop import settings
 from .forms import ProductForm
 from .models import Product, Order, OrderItem, ShippingAddress
 from .utils import cart_data, guest_order
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 
 class IndexView(View):
@@ -160,7 +161,7 @@ def process_order(request):
     order.save()
 
     if order.shipping:
-        ShippingAddress.objects.create(
+        shipping_address = ShippingAddress.objects.create(
             customer=customer,
             order=order,
             first_name=data['shipping']['first_name'],
@@ -170,22 +171,34 @@ def process_order(request):
             postcode=data['shipping']['postcode'],
             city=data['shipping']['city'],
         )
-
-    order_confirmation(request, order, customer)
+    else:
+        shipping_address = ''
+    order_confirmation(request, order, customer, shipping_address)
     return JsonResponse('Payment submitted..', safe=False)
 
 
-def order_confirmation(request, order, customer):
+def order_confirmation(request, order, customer, shipping_address):
     template = render_to_string('send_mail.html', {'customer': customer,
                                                    'order': order})
-    mail_sent = send_mail(
-        f'Potwierdzenie zamowienia nr.{order.transaction_id}',
+    email = EmailMessage(
+        f'Chinska elektronika - rachunek nr.{order.transaction_id}',
         template,
         settings.DEFAULT_FROM_EMAIL,
         [customer.email],
-        fail_silently=False,
+        headers={'Message-ID': order.id},
     )
-    return mail_sent
+    html = render_to_string('invoice.html',
+                            {'order': order,
+                             'shipping_address': shipping_address})
+    out = BytesIO()
+    stylesheets = [weasyprint.CSS(settings.STATIC_ROOT + 'css/invoice.css')]
+    weasyprint.HTML(string=html).write_pdf(out, stylesheets=stylesheets)
+
+    email.attach(f'zamowienie_{order.transaction_id}.pdf',
+                 out.getvalue(),
+                 'application/pdf')
+    email.send()
+    return email
 
 
 def invoice_pdf(request, shipping_address_id):
