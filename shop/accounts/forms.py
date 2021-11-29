@@ -27,6 +27,10 @@ class LoginForm(forms.Form):
             ),
         )
 
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        return User.objects.get(username__iexact=username)
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Hasło', widget=forms.PasswordInput())
