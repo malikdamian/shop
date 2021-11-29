@@ -1,44 +1,75 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Row, Column
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='', widget=forms.TextInput(attrs={'class': 'form-control',
-                                                                       'placeholder': 'Użytkownik'}))
-    password = forms.CharField(label='', widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                           'placeholder': 'Hasło'}))
+    username = forms.CharField(label='Użytkownik')
+    password = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Logowanie',
+            ),
+            Row(
+                Column('username'),
+                Column('password')
+            ),
+            ButtonHolder(
+                Submit('submit', 'Zaloguj', css_class='btn btn-success'),
+
+            ),
+        )
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='', widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                           'placeholder': 'Hasło'}))
-    password_2 = forms.CharField(label='', widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                             'placeholder': 'Powtórz hasło'}))
+    password = forms.CharField(label='Hasło', widget=forms.PasswordInput())
+    password_2 = forms.CharField(label='Powtórz hasło', widget=forms.PasswordInput())
 
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control',
-                                               'placeholder': 'Nazwa użytkownika',
-                                               'help_text': ''}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control',
-                                                 'placeholder': 'Imię'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control',
-                                                'placeholder': 'Nazwisko'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control',
-                                             'placeholder': 'Email'})
-        }
         labels = {
-            'username': '',
-            'first_name': '',
-            'last_name': '',
-            'email': '',
+            'username': 'Login',
+            'first_name': 'Imię',
+            'last_name': 'Nażwisko',
+            'email': 'Email',
         }
         help_texts = {
             'username': '',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Rejestracja',
+            ),
+            Row(
+                Column('username'),
+                Column('email'),
+            ),
+            Row(
+                Column('first_name'),
+                Column('last_name'),
+            ),
+            Row(
+                Column('password'),
+                Column('password_2'),
+            ),
+            ButtonHolder(
+                Submit('submit', 'Rejestracja', css_class='btn btn-success'),
+
+            ),
+        )
 
     def clean_password_2(self):
         cd = self.cleaned_data
@@ -56,3 +87,4 @@ class UserRegistrationForm(forms.ModelForm):
         if User.objects.filter(username=username).exists():
             raise ValidationError('Użytkownik o tej nazwie już istnieje.')
         return username
+

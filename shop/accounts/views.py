@@ -10,8 +10,7 @@ class LoginView(View):
 
     def get(self, request):
         form = LoginForm()
-        return render(request, 'accounts/login.html', {'form': form,
-                                              'button': 'Zaloguj'})
+        return render(request, 'accounts/login.html', {'form': form})
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -24,8 +23,7 @@ class LoginView(View):
                 return redirect('name_app:index')
             else:
                 form = LoginForm()
-        return render(request, 'accounts/login.html', {'form': form,
-                                              'button': 'Zaloguj'})
+        return render(request, 'accounts/login.html', {'form': form})
 
 
 class LogoutView(View):
@@ -39,8 +37,7 @@ class UserRegistrationView(View):
 
     def get(self, request):
         form = UserRegistrationForm()
-        return render(request, 'base_form.html', {'form': form,
-                                                  'button': 'Zarejestuj'})
+        return render(request, 'accounts/register.html', {'form': form})
 
     def post(self, request):
         form = UserRegistrationForm(request.POST)
@@ -50,8 +47,7 @@ class UserRegistrationView(View):
             user.save()
             return render(request, 'accounts/register_done.html', {'new_user': user})
 
-        return render(request, 'base_form.html', {'form': form,
-                                                  'button': 'Zarejestuj'})
+        return render(request, 'accounts/register.html', {'form': form})
 
 
 class UserInfoView(View):
