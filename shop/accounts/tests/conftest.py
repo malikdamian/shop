@@ -10,8 +10,3 @@ def user_data():
             'last_name': 'user_last_name',
             'email': 'user_email',
             }
-
-
-@pytest.fixture
-def user_data2():
-    return {'email': 'user_email', 'name': 'user_name', 'password': 'user_pass543'}

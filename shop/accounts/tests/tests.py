@@ -18,4 +18,5 @@ def test_user_signup(client, user_data):
     assert User.objects.count() == 0
     signup_url = urls.reverse('accounts:register')
     resp = client.post(signup_url, user_data)
+    # assert User.objects.count() == 1
     assert resp.status_code == 200
