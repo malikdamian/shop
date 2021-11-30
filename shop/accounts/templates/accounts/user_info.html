@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
-{% block title %} Dane o użytkowniku{% endblock %}
-{% block content %}
-<div class="container px-5 my-5">
-    <div class="text-center"><p class="display-6 fw-bolder">Dane o użytkowniku</p></div>
-    <p class="text-center" >Nazwa użytkownika: {{ user.username }} </p>
-    <p class="text-center" >Imię: {{ user.first_name }} </p>
 
-</div>
+{% block title %} Dane o użytkowniku{% endblock %}
+
+{% block content %}
+
+
+    <div class="container col-lg-4 my-5">
+        <div class="media text-center">
+            <img class="bd-placeholder-img rounded-circle" src="https://api.lorem.space/image/face?w=150&h=220"
+                 alt="user" width="180" height="200">
+            <div class="media-body">
+                <h3 class="mt-0">{{ user }}</h3>
+                {% if user.first_name %}
+                    <span>Imię: <span style="font-weight: bold; font-style: italic">{{ user.first_name }}</span></span>
+                {% endif %}
+                {% if user.last_name %}
+                    <span>Nazwisko: <span style="font-weight: bold; font-style: italic">{{ user.last_name }}</span></span>
+                {% endif %}
+                    <p></p>
+                {% if user.last_name %}
+                    <p>Email: <span style="font-weight: bold">{{ user.email }}</span></p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
