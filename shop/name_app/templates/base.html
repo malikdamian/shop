@@ -13,8 +13,15 @@
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    .asteriskField {
+    display: none;
+}
+</style>
 {#       <script src="{% static 'js/csrf_token.js' %}"></script>#}
     <script type="text/javascript">
         const user = '{{ request.user }}';
@@ -68,17 +75,9 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'name_app:index' %}">Głowna</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'name_app:products' %}">Sklep</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">O nas</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sklep</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'name_app:products' %}">Wszystkie produkty</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#">Popular Items</a></li>
-                        <li><a class="dropdown-item" href="#">New Arrivals</a></li>
-                    </ul>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'name_app:products' %}">Produkty</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'name_app:add-product' %}">Dodaj produkt</a></li>
             </ul>
             </div>
@@ -117,7 +116,7 @@
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
             <h1 class="display-4 fw-bolder">Chińska elektronika</h1>
-            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+            <p class="lead fw-normal text-white-50 mb-0">Technologia którą pokochasz</p>
         </div>
     </div>
 </header>
@@ -129,12 +128,13 @@
     <!-- Footer-->
     <footer class="py-5 bg-dark">
         <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
-    </footer>
-    <!-- Bootstrap core JS-->
+            <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{% static 'js/form-validation.js' %}"></script>
     <script src="{% static 'js/cart.js' %}"></script>
+
+    </footer>
 
 </body>
 </html>
