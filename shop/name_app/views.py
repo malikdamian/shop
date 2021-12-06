@@ -1,18 +1,23 @@
 import datetime
 from io import BytesIO
 import weasyprint
+import json
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
-import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views import View
+from django.core.mail import EmailMessage
+
 from shop import settings
 from .forms import ProductForm
 from .models import Product, Order, OrderItem, ShippingAddress
 from .utils import cart_data, guest_order
-from django.core.mail import EmailMessage
+
+
 
 
 class IndexView(View):
@@ -46,7 +51,8 @@ class ProductView(View):
                                                 'products': products})
 
 
-class AddProductView(View):
+class AddProductView(LoginRequiredMixin, View):
+    login_url = 'accounts:login'
 
     def get(self, request):
         form = ProductForm()
